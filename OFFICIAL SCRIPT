@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blockly Minecraft Projects</title>
+<style>
+body { font-family: sans-serif; }
+.blocklyMainBackground { fill: url(#blocklyGradientBackground) !important; }
+.blocklyText { font-family: Monospace !important; font-weight: normal !important; }
+button { background-color: #4CAF50; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+#projects { margin-bottom: 20px; }
+</style>
+<svg height="0" width="0">
+  <defs>
+    <linearGradient id="blocklyGradientBackground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000; stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#444444; stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
+</head>
+<body>
+
+<div id="projects">
+  <button onclick="createProject()">+ Create Project</button>
+</div>
+
+<div id="blocklyDiv" style="height: 800px; width: 100%; display:none;"></div>
+<button id="runBtn" onclick="runMC()" style="display:none;">Run in Minecraft</button>
+<button id="backBtn" onclick="goHome()" style="display:none;">Back to Home</button>
+
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<script>
+let workspace;
+let currentProject = null;
+
+// ------------------ PROJECT HOME ------------------
+function createProject() {
+  const name = prompt("Enter project name:");
+  if (!name) return;
+  saveProjectList(name);
+  renderProjects();
+  openProject(name);
+}
+
+function saveProjectList(name) {
+  let projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  if (!projects.includes(name)) projects.push(name);
+  localStorage.setItem("projects", JSON.stringify(projects));
+}
+
+function renderProjects() {
+  const container = document.getElementById("projects");
+  container.innerHTML = '<button onclick="createProject()">+ Create Project</button>';
+  const projects = JSON.parse(localStorage.getItem("projects") || "[]");
+  projects.forEach(name => {
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.onclick = () => openProject(name);
+    container.appendChild(btn);
+  });
+}
+
+function goHome() {
+  if (workspace && currentProject) {
+    saveCurrentProject();
+    workspace.dispose();
+    workspace = null;
+    currentProject = null;
+  }
+  document.getElementById("blocklyDiv").style.display = "none";
+  document.getElementById("runBtn").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+  document.getElementById("projects").style.display = "block";
+}
+
+// ------------------ SAVE / LOAD ------------------
+function saveCurrentProject() {
+  if (!workspace || !currentProject) return;
+  const xml = Blockly.Xml.workspaceToDom(workspace, true); // true preserves comments/collapsed
+  const xmlText = Blockly.Xml.domToText(xml);
+  localStorage.setItem("project_" + currentProject, xmlText);
+}
+
+function openProject(name) {
+  currentProject = name;
+  document.getElementById("projects").style.display = "none";
+  document.getElementById("blocklyDiv").style.display = "block";
+  document.getElementById("runBtn").style.display = "inline-block";
+  document.getElementById("backBtn").style.display = "inline-block";
+
+  const toolboxXml = `
+    <xml id="toolbox" style="display:cover">
+      <category name="Basic" colour="#FFF500">
+        <block type="on_start"></block>
+        <block type="place_block"></block>
+        <block type="on_chat_command"></block>
+        <block type="block_broken"></block>
+        <block type="console_log"></block>
+        <block type="true_false_logic"></block>
+        <block type="boolean"></block>
+      </category>
+      <category name="Agent" colour="#FF3400">
+        <block type="agent"></block>
+        <block type="agent_place_block"></block>
+        <block type="agent_break_block"></block>
+        <block type="agent_orientation"></block>
+      </category>
+      <category name="Player" colour="#0078D7">
+        <block type="place_block"></block>
+        <block type="on_chat_command"></block>
+        <block type="sayblock"></block>
+      </category>
+      <category name="event" colour="#569137">
+        <block type="on_start"></block>
+        <block type="block_broken"></block>
+      </category>
+    </xml>
+  `;
+
+  workspace = Blockly.inject('blocklyDiv', {
+    toolbox: Blockly.Xml.textToDom(toolboxXml),
+    renderer: 'zelos',
+    collapse: true,
+    comments: true,
+  });
+
+  // Define all your JSON blocks here (same as previous)
+  Blockly.defineBlocksWithJsonArray([...]);
+
+  // Load saved workspace if exists
+  const xmlText = localStorage.getItem("project_" + name);
+  if (xmlText) {
+    const xml = Blockly.Xml.textToDom(xmlText);
+    Blockly.Xml.domToWorkspace(xml, workspace);
+  }
+}
+
+// ------------------ MCAPI ------------------
+function sendMCCommand(command) {
+  try { mc.runCommand(command); console.log("MC:", command); }
+  catch(e){ console.error(e); }
+}
+
+Blockly.JavaScript['place_block'] = function(block) {
+  const type = block.getFieldValue('NAME');
+  const x = block.getFieldValue('Sa');
+  const y = block.getFieldValue('Sasa');
+  const z = block.getFieldValue('Sasasa');
+  return `sendMCCommand("setblock ${x} ${y} ${z} ${type}");\n`;
+};
+Blockly.JavaScript['agent_place_block'] = function(block) {
+  const type = block.getFieldValue('NAME');
+  return `sendMCCommand("agent.place ${type}");\n`;
+};
+Blockly.JavaScript['agent_break_block'] = function(block) {
+  const type = block.getFieldValue('NAME');
+  return `sendMCCommand("agent.break ${type}");\n`;
+};
+Blockly.JavaScript['agent'] = function(block) {
+  const dir = block.getFieldValue('NAME');
+  return `sendMCCommand("agent.turn ${dir.toLowerCase()}");\n`;
+};
+Blockly.JavaScript['console_log'] = function(block) {
+  const val = block.getFieldValue('Default');
+  return `console.log("${val}");\n`;
+};
+Blockly.JavaScript['sayblock'] = function(block) {
+  const val = block.getFieldValue('input');
+  return `sendMCCommand("say ${val}");\n`;
+};
+Blockly.JavaScript['true_false_logic'] = function(block) {
+  const code = Blockly.JavaScript.valueToCode(block, 'Boolean', Blockly.JavaScript.ORDER_ATOMIC) || 'false';
+  const statements = Blockly.JavaScript.statementToCode(block, 'NAME');
+  return `if(${code}){\n${statements}}\n`;
+};
+Blockly.JavaScript['boolean'] = function(block) {
+  const val = block.getFieldValue('BOOL') === "TRUE";
+  return val ? "true" : "false";
+};
+
+// ------------------ RUN ------------------
+function runMC() {
+  if (!workspace) return alert("Open a project first!");
+  const code = Blockly.JavaScript.workspaceToCode(workspace);
+  try { eval(code); }
+  catch(e){ console.error(e); }
+}
+
+// ------------------ INITIAL ------------------
+renderProjects();
+</script>
+</body>
+</html>
