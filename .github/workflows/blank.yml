@@ -1,0 +1,243 @@
+<style>
+.blocklyMainBackground {
+  fill: url(#blocklyGradientBackground) !important;
+}
+.blocklyText {
+  font-family: Monospace !important;
+  font-weight: normal !important;
+}
+</style>
+
+<svg height="0" width="0">
+  <defs>
+    <linearGradient id="blocklyGradientBackground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000; stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#444444; stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<xml id="toolbox" style="display:cover">
+  <category name="Basic" colour="#FFF500">
+    <block type="on_start"></block>
+    <block type="place_block"></block>
+    <block type="on_chat_command"></block>
+    <block type="block_broken"></block>
+    <block type="console_log"></block>
+    <block type="true_false_logic"></block>
+    <block type="boolean"></block>
+  </category>
+  <category name="Agent" colour="#FF3400">
+    <block type="agent"></block>
+    <block type="agent_place_block"></block>
+    <block type="agent_break_block"></block>
+    <block type="agent_orientation"></block>
+  </category>
+  <category name="Player" colour="#0078D7">
+    <block type="place_block"></block>
+    <block type="on_chat_command"></block>
+    <block type="sayblock"></block>
+  </category>
+  <category name="event" colour="#569137">
+    <block type="on_start"></block>
+    <block type="block_broken"></block>
+  </category>
+</xml>
+
+<div id="blocklyDiv" style="height: 4096px; width: 2048px;"></div>
+
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<script>
+const workspace = Blockly.inject('blocklyDiv', {
+  toolbox: document.getElementById('toolbox'),
+  renderer: 'zelos',
+});
+
+// ---------- Define all blocks ----------
+Blockly.defineBlocksWithJsonArray([
+
+  // Place Block
+  {
+    "type": "place_block",
+    "message0": "Place Block %1 %2 At X %3 %4 Y %5 %6 Z %7",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "NAME",
+        "options": [
+          ["Lever","Places Lever"],
+          ["Repeated Command Block","Places Repeated Command Block"],
+          ["Item Frame","Places Item Frame"],
+          ["Oak Button","Places Oak Button"],
+          ["Chain Command Block","Places Chain Command Block"],
+          ["Grass","Places Grass"],
+          ["Stone Button","Places Stone Button"],
+          ["Nether Brick Button","Places Nether Brick Button"],
+          ["Crimson Button","Places Crimson Button"],
+          ["Warped Button","Places Warped Button"],
+          ["Command Block","Places Command Block"],
+          ["Dirt","Places Dirt"],
+          ["Chain","places Chain"],
+          ["Glass","Places Glass"],
+          ["Red Glass","Places Glass as the Default Hue"],
+          ["Green Glass","Places Glass as the Green Hue"],
+          ["Grass Trail","Places Grass Trail"],
+          ["Yellow Glass","Places Glass as the Yellow Hue"],
+          ["Lime Glass","Places Glass as the Lime Hue"],
+          ["Black Glass","Places Glass with No brightness"],
+          ["White Glass","Places Glass as the High brightness"],
+          ["Gray Glass","Places Gray Glass as the Low Brightness"],
+          ["Light Gray Glass","Places Glass almost like white glass"],
+          ["Brown glass","Places Glass as the Low brightness Orange"],
+          ["Ice","Places Ice"],
+          ["Packed Ice","Places Packed Ice"],
+          ["Glowstone","Places Glowstone"],
+          ["Stone","Places Stone"],
+          ["Cobblestone","Places Cobblestone"],
+          ["Tinted Glass","Places Glass as the Low purple color, Used as a vibrancy of colors"],
+          ["Structure Void","Places Structure Void"],
+          ["Structure Void 2","Places Structure Void 2"],
+          ["Redstone","Places Redstone"],
+          ["Redstone Lamp","Places Redstone Lamp"]
+        ]
+      },
+      {"type":"input_dummy"},
+      {"type":"field_number","name":"Sa","value":0},
+      {"type":"input_dummy","align":"RIGHT"},
+      {"type":"field_number","name":"Sasa","value":0},
+      {"type":"input_dummy","align":"RIGHT"},
+      {"type":"field_number","name":"Sasasa","value":0}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "#0078D7"
+  },
+
+  // on_start
+  {
+    "type": "on_start",
+    "message0": "on start %1",
+    "args0":[{"type":"input_statement","name":"NAME"}],
+    "colour":"#569137",
+    "tooltip":"starts the script, without that, it will not work"
+  },
+
+  // on_chat_command
+  {
+    "type": "on_chat_command",
+    "message0":"On chat command %1 %2",
+    "args0":[
+      {"type":"field_input","name":"NAME","text":":)"},
+      {"type":"input_statement","name":"NAME"}
+    ],
+    "colour":"#0078D7"
+  },
+
+  // block_broken
+  {
+    "type": "block_broken",
+    "message0":"on block broken %1",
+    "args0":[{"type":"input_statement","name":"NAME"}],
+    "colour":"#569137"
+  },
+
+  // agent
+  {
+    "type": "agent",
+    "message0":"Agent turn %1",
+    "args0":[{"type":"field_dropdown","name":"NAME","options":[["Left","Turns left"],["Right","Turns right"]]}],
+    "previousStatement":null,
+    "nextStatement":null,
+    "colour":"#FF3400"
+  },
+
+  // agent_place_block
+  {
+    "type": "agent_place_block",
+    "message0":"Agent place %1",
+    "args0":[{"type":"field_dropdown","name":"NAME","options":[
+      ["Lever","Places Lever"],["Repeated Command Block","Places Repeated Command Block"],["Item Frame","Places Item Frame"],
+      ["Oak Button","Places Oak Button"],["Chain Command Block","Places Chain Command Block"],["Grass","Places Grass"],
+      ["Stone Button","Places Stone Button"],["Nether Brick Button","Places Nether Brick Button"],["Crimson Button","Places Crimson Button"],
+      ["Warped Button","Places Warped Button"],["Command Block","Places Command Block"],["Dirt","Places Dirt"],
+      ["Grass Trail","places Grass"],["Glass","Places Glass"],["Red Glass","Places Glass as the Default Hue"],
+      ["Green Glass","Places Glass as the Green Hue"],["Yellow Glass","Places Glass as the Yellow Hue"],
+      ["Lime Glass","Places Glass as the Lime Hue"],["Black Glass","Places Glass with No brightness"],["White Glass","Places Glass as the High brightness"],
+      ["Gray Glass","Places Gray Glass as the Low Brightness"],["Light Gray Glass","Places Glass almost like white glass"],["Brown glass","Places Glass as the Low brightness Orange"],
+      ["Ice","Places Ice"],["Packed Ice","Places Packed Ice"],["Glowstone","Places Glowstone"],["Stone","Places Stone"],["Cobblestone","Places Cobblestone"],
+      ["Tinted Glass","Places Glass as the Low purple color, Used as a vibrancy of colors"],["Structure Void","Places Structure Void"],["Structure Void 2","Places Structure Void 2"],
+      ["Redstone","Places Redstone"],["Redstone Lamp","Places Redstone Lamp"]
+    ]}],
+    "previousStatement":null,
+    "nextStatement":null,
+    "colour":"#FF3400"
+  },
+
+  // agent_break_block
+  {
+    "type":"agent_break_block",
+    "message0":"Agent break block %1",
+    "args0":[{"type":"field_dropdown","name":"NAME","options":[
+      ["Lever","Places Lever"],["Repeated Command Block","Places Repeated Command Block"],["Item Frame","Places Item Frame"],
+      ["Oak Button","Places Oak Button"],["Chain Command Block","Places Chain Command Block"],["Grass","Places Grass"],
+      ["Stone Button","Places Stone Button"],["Nether Brick Button","Places Nether Brick Button"],["Crimson Button","Places Crimson Button"],
+      ["Warped Button","Places Warped Button"],["Command Block","Places Command Block"],["Dirt","Places Dirt"],
+      ["chain","places Chain"],["Glass","Places Glass"],["Red Glass","Places Glass as the Default Hue"],
+      ["Green Glass","Places Glass as the Green Hue"],["Yellow Glass","Places Glass as the Yellow Hue"],
+      ["Lime Glass","Places Glass as the Lime Hue"],["Black Glass","Places Glass with No brightness"],["White Glass","Places Glass as the High brightness"],
+      ["Gray Glass","Places Gray Glass as the Low Brightness"],["Light Gray Glass","Places Glass almost like white glass"],["Brown glass","Places Glass as the Low brightness Orange"],
+      ["Ice","Places Ice"],["Packed Ice","Places Packed Ice"],["Glowstone","Places Glowstone"],["Stone","Places Stone"],["Cobblestone","Places Cobblestone"],
+      ["Tinted Glass","Places Glass as the Low purple color, Used as a vibrancy of colors"],["Structure Void","Places Structure Void"],["Structure Void 2","Places Structure Void 2"],
+      ["Redstone","Places Redstone"],["Redstone Lamp","Places Redstone Lamp"]
+    ]}],
+    "previousStatement":null,
+    "nextStatement":null,
+    "colour":"#FF3400"
+  },
+
+  // agent_orientation
+  {"type":"agent_orientation","message0":"Agent Orientation","output":null,"colour":"#FF3400","tooltip":"agent"},
+
+  // boolean
+  {"type":"boolean","message0":"%1","args0":[{"type":"field_dropdown","name":"BOOL","options":[["true","TRUE"],["false","FALSE"]]}],"output":"Boolean","colour":"#459197","tooltip":"Returns true or false"},
+
+  // console_log
+  {"type":"console_log","message0":"Console %1 %2","args0":[
+    {"type":"field_dropdown","name":"NAME","options":[
+      ["Trace","Logs an original log to a trace"],["Table","Logs a table"],["Error","Logs an error"],["log","Logs a normal log"],
+      ["Value","Logs a value Expected by a Variable count and equated by an assert of how many values are there"],
+      ["Debug","Logs a debug"],["Warn","Logs a warn"],["Info","Logs an info"]
+    ]},
+    {"type":"field_input","name":"Default","text":"Hello"}
+  ],"previousStatement":null,"nextStatement":null,"colour":"#000045"},
+
+  // true_false_logic
+  {"type":"true_false_logic","message0":"If %1 Then %2","args0":[
+    {"type":"input_value","name":"Boolean","align":"RIGHT"},
+    {"type":"input_statement","name":"NAME"}
+  ],"previousStatement":null,"nextStatement":null,"colour":"#459197"},
+
+  // sayblock
+  {"type":"sayblock","message0":"Say ' %1 '","args0":[{"type":"field_input","name":"input","text":":)"}],"previousStatement":null,"nextStatement":null,"colour":"#0078D7"}
+
+]);
+
+// ---------- Load workspace ----------
+const savedXml = localStorage.getItem('blocklyWorkspace');
+if(savedXml){
+  const xml = Blockly.Xml.textToDom(savedXml);
+  Blockly.Xml.domToWorkspace(xml, workspace);
+}
+
+// ---------- Save workspace ----------
+window.addEventListener('beforeunload',()=>{
+  const xml = Blockly.Xml.workspaceToDom(workspace);
+  localStorage.setItem('blocklyWorkspace', Blockly.Xml.domToText(xml));
+});
+
+// ---------- Auto-save every 10 seconds ----------
+setInterval(()=>{
+  const xml = Blockly.Xml.workspaceToDom(workspace);
+  localStorage.setItem('blocklyWorkspace', Blockly.Xml.domToText(xml));
+},10000);
+</script>
